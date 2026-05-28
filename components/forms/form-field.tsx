@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { Children, cloneElement, isValidElement, useId } from "react";
 
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -31,6 +31,16 @@ export function FormField({
   const describedBy =
     [errorId, hintId].filter(Boolean).join(" ") || undefined;
 
+  const control = Children.map(children, (child) => {
+    if (!isValidElement(child)) return child;
+
+    return cloneElement(child, {
+      id: fieldId,
+      "aria-describedby": describedBy,
+      "aria-invalid": error ? true : undefined,
+    });
+  });
+
   return (
     <div className={cn("space-y-2", className)}>
       <Label htmlFor={fieldId} className="text-sm font-medium text-foreground">
@@ -42,12 +52,7 @@ export function FormField({
         ) : null}
         {required ? <span className="sr-only"> (required)</span> : null}
       </Label>
-      <div
-        aria-describedby={describedBy}
-        aria-invalid={error ? true : undefined}
-      >
-        {children}
-      </div>
+      {control}
       {hint && !error ? (
         <p id={hintId} className="text-xs leading-relaxed text-muted-foreground">
           {hint}

@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Container } from "@/components/layout/container";
@@ -55,8 +54,6 @@ export function WeddingIntakeForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
 
   const form = useForm<WeddingIntakeFormValues>({
     resolver: zodResolver(weddingIntakeSchema),
@@ -112,53 +109,13 @@ export function WeddingIntakeForm() {
         return;
       }
 
-      if (result.success) {
-        setSuccessMessage(result.message);
-        setIsComplete(true);
-      } else {
-        toast.error(result.message);
-      }
+      toast.error(result.message);
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   });
-
-  if (isComplete) {
-    return (
-      <section id="intake" className="section-y scroll-mt-24">
-        <Container size="narrow">
-          <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="glass-card mx-auto max-w-lg p-8 text-center sm:p-10"
-            role="status"
-          >
-            <div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <CheckCircle2 className="size-8" aria-hidden />
-            </div>
-            <Heading as="h2" className="mb-3 text-3xl">
-              You&apos;re all set!
-            </Heading>
-            <Text className="mx-auto max-w-sm text-pretty">{successMessage}</Text>
-            <button
-              type="button"
-              onClick={() => {
-                setIsComplete(false);
-                setCurrentStep(0);
-                form.reset(defaultValues);
-              }}
-              className="mt-8 rounded-lg px-2 py-1 text-sm font-medium text-primary underline-offset-4 transition-colors hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              Start another intake
-            </button>
-          </motion.div>
-        </Container>
-      </section>
-    );
-  }
 
   return (
     <section id="intake" className="scroll-mt-24 py-16 sm:py-20 md:py-28">

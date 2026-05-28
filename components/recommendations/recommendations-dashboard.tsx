@@ -21,13 +21,11 @@ import type { RecommendationDetailsResponse } from "@/lib/validators";
 
 type RecommendationsDashboardProps = {
   data: RecommendationDetailsResponse;
-  onRefresh: () => Promise<void>;
   onBudgetDataChange: (budgetData: BudgetTrackingData) => void;
 };
 
 export function RecommendationsDashboard({
   data,
-  onRefresh,
   onBudgetDataChange,
 }: RecommendationsDashboardProps) {
   const prefersReducedMotion = useReducedMotion();
@@ -143,7 +141,6 @@ export function RecommendationsDashboard({
         <BudgetTrackingSection
           intakeId={data.intake_id}
           budgetData={selectBudgetTrackingData(data)}
-          onRefresh={onRefresh}
           onBudgetDataChange={onBudgetDataChange}
         />
       </Container>

@@ -30,7 +30,6 @@ export async function processRecommendationRequest(
 
   try {
     aiResponse = await generateVendorRecommendations(safeIntake, totalBudgetInr);
-    await createRecommendationRecord(weddingIntake.id, aiResponse);
   } catch (error) {
     await deleteWeddingIntake(weddingIntake.id).catch((rollbackError) => {
       console.error(
@@ -39,6 +38,26 @@ export async function processRecommendationRequest(
       );
     });
     throw error;
+  }
+
+  const SAVE_ATTEMPTS = 2;
+  let lastSaveError: unknown;
+
+  for (let attempt = 1; attempt <= SAVE_ATTEMPTS; attempt++) {
+    try {
+      await createRecommendationRecord(weddingIntake.id, aiResponse);
+      lastSaveError = undefined;
+      break;
+    } catch (error) {
+      lastSaveError = error;
+      if (attempt === SAVE_ATTEMPTS) break;
+    }
+  }
+
+  if (lastSaveError) {
+    throw lastSaveError instanceof Error
+      ? lastSaveError
+      : new Error("Failed to save recommendations");
   }
 
   return {

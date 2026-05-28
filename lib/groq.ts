@@ -19,6 +19,7 @@ import {
 export const GROQ_MODEL = "llama-3.3-70b-versatile" as const;
 
 const MAX_GENERATION_ATTEMPTS = 2;
+const GROQ_REQUEST_TIMEOUT_MS = 45_000;
 
 let groqClient: Groq | null = null;
 
@@ -103,13 +104,16 @@ export async function generateVendorRecommendations(
     let parsedJson: unknown;
 
     try {
-      const completion = await groq.chat.completions.create({
-        model: GROQ_MODEL,
-        temperature: 0.35,
-        max_tokens: 2048,
-        response_format: { type: "json_object" },
-        messages,
-      });
+      const completion = await groq.chat.completions.create(
+        {
+          model: GROQ_MODEL,
+          temperature: 0.35,
+          max_tokens: 2048,
+          response_format: { type: "json_object" },
+          messages,
+        },
+        { signal: AbortSignal.timeout(GROQ_REQUEST_TIMEOUT_MS) },
+      );
 
       parsedJson = extractJsonContent(completion.choices[0]?.message?.content);
     } catch (error) {

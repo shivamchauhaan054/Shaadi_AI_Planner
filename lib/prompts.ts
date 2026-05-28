@@ -1,10 +1,9 @@
-import { format } from "date-fns";
-
 import {
   BUDGET_OPTIONS,
   PRIORITY_OPTIONS,
   VENUE_OPTIONS,
 } from "@/lib/constants/intake";
+import { formatDisplayDate } from "@/lib/format/dates";
 import { FIELD_LIMITS } from "@/lib/security/constants";
 import {
   sanitizeInternalPromptNote,
@@ -55,7 +54,7 @@ export function buildRecommendationUserPrompt(
   intake: RecommendRequest,
   totalBudgetInr: number,
 ): string {
-  const weddingDate = format(new Date(intake.weddingDate), "PPPP");
+  const weddingDate = formatDisplayDate(intake.weddingDate, "PPPP", intake.weddingDate);
   const venueLabel = labelFor(VENUE_OPTIONS, intake.venueType);
   const budgetLabel = labelFor(BUDGET_OPTIONS, intake.budgetRange);
   const priorityLabels = intake.priorities

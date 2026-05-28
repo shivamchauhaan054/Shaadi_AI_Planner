@@ -23,12 +23,32 @@ async function parseJsonBody(response: Response): Promise<unknown> {
   }
 }
 
+function formatFieldDetails(details: Record<string, string[]>): string {
+  const parts = Object.entries(details).flatMap(([field, messages]) =>
+    messages.map((message) => `${field}: ${message}`),
+  );
+  return parts.slice(0, 3).join(" · ");
+}
+
 function getErrorMessage(body: unknown, fallback: string): string {
-  if (body && typeof body === "object" && "error" in body) {
-    const error = (body as { error?: unknown }).error;
-    if (typeof error === "string") return error;
+  if (!body || typeof body !== "object") return fallback;
+
+  const record = body as { error?: unknown; details?: unknown };
+  const base =
+    typeof record.error === "string" ? record.error : fallback;
+
+  if (
+    record.details &&
+    typeof record.details === "object" &&
+    !Array.isArray(record.details)
+  ) {
+    const fieldDetails = formatFieldDetails(
+      record.details as Record<string, string[]>,
+    );
+    if (fieldDetails) return `${base} (${fieldDetails})`;
   }
-  return fallback;
+
+  return base;
 }
 
 export async function fetchRecommendationDetails(

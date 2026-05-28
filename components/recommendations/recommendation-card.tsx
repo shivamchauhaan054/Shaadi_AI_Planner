@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/card";
 import { formatInr } from "@/lib/format/currency";
 import { staggerItem } from "@/lib/motion/variants";
+import { FIELD_LIMITS } from "@/lib/security/constants";
+import { sanitizeDisplayText } from "@/lib/security/sanitize";
 import type { VendorRecommendation } from "@/lib/validators";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +27,11 @@ export function RecommendationCard({
 }: RecommendationCardProps) {
   const prefersReducedMotion = useReducedMotion();
   const isTopPriority = recommendation.priority_rank === 1;
+  const category = sanitizeDisplayText(
+    recommendation.vendor_category,
+    FIELD_LIMITS.vendorCategory,
+  );
+  const rationale = sanitizeDisplayText(recommendation.rationale, 280);
 
   return (
     <motion.div variants={prefersReducedMotion ? undefined : staggerItem}>
@@ -38,7 +45,7 @@ export function RecommendationCard({
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 space-y-1">
               <CardTitle className="font-display text-xl leading-snug sm:text-2xl">
-                {recommendation.vendor_category}
+                {category}
               </CardTitle>
               {isTopPriority ? (
                 <CardDescription className="flex items-center gap-1 text-primary">
@@ -70,7 +77,7 @@ export function RecommendationCard({
               AI rationale
             </p>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              {recommendation.rationale}
+              {rationale}
             </p>
           </div>
         </CardContent>

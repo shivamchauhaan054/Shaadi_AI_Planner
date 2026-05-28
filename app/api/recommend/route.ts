@@ -18,6 +18,10 @@ import { formatZodErrors } from "@/lib/validations/format-errors";
 import { recommendRequestSchema } from "@/lib/validators";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+/** Groq generation may exceed default on cold starts — adjust per Vercel plan. */
+export const maxDuration = 60;
 
 const ROUTE = "POST /api/recommend";
 

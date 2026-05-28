@@ -36,7 +36,7 @@ const cards = [
   },
   {
     key: "remaining",
-    label: "Remaining",
+    label: "Left in wedding cap",
     icon: IndianRupee,
     getValue: (s: BudgetSummary) => s.remaining,
     accent: "from-card to-secondary text-foreground",
@@ -80,6 +80,13 @@ export function BudgetSummaryCards({ summary }: BudgetSummaryCardsProps) {
           </motion.div>
         ))}
       </motion.div>
+
+      {summary.unallocated > 0 ? (
+        <p className="text-sm text-muted-foreground">
+          {formatInr(summary.unallocated)} of your cap is not yet assigned across
+          vendor categories by the AI plan.
+        </p>
+      ) : null}
 
       <div className="rounded-2xl border border-border/60 bg-card/80 px-5 py-4 sm:px-6">
         <div className="mb-2 flex items-center justify-between gap-2 text-sm">

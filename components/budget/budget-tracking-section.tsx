@@ -17,18 +17,15 @@ type BudgetTrackingSectionProps = {
   intakeId: string;
   budgetData: BudgetTrackingData;
   onBudgetDataChange: (data: BudgetTrackingData) => void;
-  onRefresh: () => Promise<void>;
 };
 
 export function BudgetTrackingSection({
   intakeId,
   budgetData,
   onBudgetDataChange,
-  onRefresh,
 }: BudgetTrackingSectionProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handlePaymentSubmit = useCallback(
     async (payment: CreatePaymentInput) => {
@@ -50,18 +47,11 @@ export function BudgetTrackingSection({
         });
 
         toast.success("Payment recorded");
-
-        setIsRefreshing(true);
-        try {
-          await onRefresh();
-        } finally {
-          setIsRefreshing(false);
-        }
       } finally {
         setIsSubmitting(false);
       }
     },
-    [budgetData.vendor_categories, onBudgetDataChange, onRefresh],
+    [budgetData.vendor_categories, onBudgetDataChange],
   );
 
   return (
@@ -85,44 +75,32 @@ export function BudgetTrackingSection({
         }
       />
 
-      <div
-        className={
-          isRefreshing ? "pointer-events-none opacity-60 transition-opacity" : ""
-        }
-        aria-busy={isRefreshing}
-      >
-        <div className="mb-10 grid gap-4 sm:grid-cols-2">
-          {budgetData.category_budgets.length === 0 ? (
-            <div
-              className="col-span-full rounded-2xl border border-dashed border-border/80 bg-card/50 px-6 py-12 text-center"
-              role="status"
-            >
-              <p className="text-sm font-medium text-foreground">
-                No vendor allocations yet
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Complete your intake to see category budgets here.
-              </p>
-            </div>
-          ) : (
-            budgetData.category_budgets.map((budget) => (
-              <BudgetCategoryCard
-                key={budget.vendor_category}
-                budget={budget}
-              />
-            ))
-          )}
-        </div>
+      <div className="mb-10 grid gap-4 sm:grid-cols-2">
+        {budgetData.category_budgets.length === 0 ? (
+          <div
+            className="col-span-full rounded-2xl border border-dashed border-border/80 bg-card/50 px-6 py-12 text-center"
+            role="status"
+          >
+            <p className="text-sm font-medium text-foreground">
+              No vendor allocations yet
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Complete your intake to see category budgets here.
+            </p>
+          </div>
+        ) : (
+          budgetData.category_budgets.map((budget) => (
+            <BudgetCategoryCard
+              key={budget.vendor_category}
+              budget={budget}
+            />
+          ))
+        )}
+      </div>
 
-        <div className="space-y-4">
-          <h3 className="font-display text-lg font-semibold">
-            Payment history
-          </h3>
-          <PaymentTable
-            payments={budgetData.payments}
-            isLoading={isRefreshing}
-          />
-        </div>
+      <div className="space-y-4">
+        <h3 className="font-display text-lg font-semibold">Payment history</h3>
+        <PaymentTable payments={budgetData.payments} />
       </div>
 
       <PaymentModal

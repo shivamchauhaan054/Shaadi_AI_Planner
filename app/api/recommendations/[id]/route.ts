@@ -12,6 +12,8 @@ import {
 import { getRecommendationDetails } from "@/lib/services/recommendation-details";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const ROUTE = "GET /api/recommendations/[id]";
 

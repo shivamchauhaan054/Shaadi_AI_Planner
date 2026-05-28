@@ -1,7 +1,11 @@
+import { getAppUrl } from "@/lib/env/app-url";
+
 export const APP_NAME = "Shaadi AI Planner";
 export const APP_DESCRIPTION =
   "Plan your dream Indian wedding with AI-powered vendor budgets, payment tracking, and elegant intake flows.";
-export const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+/** Resolved at runtime; uses NEXT_PUBLIC_APP_URL or VERCEL_URL on Vercel. */
+export const APP_URL = getAppUrl();
 
 export const NAV_LINKS = [
   { href: "/#features", label: "Features" },

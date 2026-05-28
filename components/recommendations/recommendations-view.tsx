@@ -127,7 +127,6 @@ export function RecommendationsView({ intakeId }: RecommendationsViewProps) {
   return (
     <RecommendationsDashboard
       data={state.data}
-      onRefresh={() => load(true)}
       onBudgetDataChange={handleBudgetDataChange}
     />
   );

@@ -16,5 +16,6 @@ export function computeBudgetSummary(
     total_allocated: totalAllocated,
     total_spent: totalSpent,
     remaining: totalBudget - totalSpent,
+    unallocated: Math.max(0, totalBudget - totalAllocated),
   };
 }

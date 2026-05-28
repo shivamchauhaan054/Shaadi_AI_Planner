@@ -14,6 +14,8 @@ import { createPaymentSchema } from "@/lib/validations/payments";
 import { formatZodErrors } from "@/lib/validations/format-errors";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const ROUTE = "POST /api/payments";
 

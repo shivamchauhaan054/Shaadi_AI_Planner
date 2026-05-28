@@ -1,6 +1,9 @@
 import { RecommendationsView } from "@/components/recommendations/recommendations-view";
 import { createPageMetadata } from "@/lib/metadata";
 
+/** Private per-intake dashboard — always rendered on demand. */
+export const dynamic = "force-dynamic";
+
 type RecommendationsPageProps = {
   params: { id: string };
 };
