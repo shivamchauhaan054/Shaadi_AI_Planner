@@ -111,6 +111,12 @@ export {
   type BudgetSummary,
 } from "@/lib/validations/budget-summary";
 
+export const recommendationVersionSchema = z.object({
+  id: z.string().uuid(),
+  created_at: z.string(),
+  recommendations: z.array(vendorRecommendationSchema),
+});
+
 export const recommendationDetailsResponseSchema = z.object({
   intake_id: z.string().uuid(),
   wedding_date: z.string(),
@@ -125,7 +131,9 @@ export const recommendationDetailsResponseSchema = z.object({
   payments: z.array(paymentRecordSchema),
   vendor_categories: z.array(z.string()),
   generated_at: z.string().nullable(),
+  versions: z.array(recommendationVersionSchema).optional(),
 });
+
 
 export type RecommendationDetailsResponse = z.infer<
   typeof recommendationDetailsResponseSchema

@@ -1,7 +1,7 @@
-"use client";
-
-import { Calendar, MapPin, Users } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Calendar, MapPin, Users, Sparkles, RefreshCw } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
+import { toast } from "sonner";
 
 import { BudgetTrackingSection } from "@/components/budget/budget-tracking-section";
 import {
@@ -10,29 +10,83 @@ import {
 } from "@/lib/budget/tracking";
 import { BudgetSummaryCards } from "@/components/recommendations/budget-summary-cards";
 import { RecommendationCard } from "@/components/recommendations/recommendation-card";
+import { BudgetAllocationChart } from "@/components/recommendations/budget-allocation-chart";
 import { Container } from "@/components/layout/container";
 import { SectionHeader } from "@/components/shared/section-header";
 import { Eyebrow, Heading, Text } from "@/components/layout/typography";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { formatDisplayDate } from "@/lib/format/dates";
 import { formatPriority, formatVenueType } from "@/lib/format/labels";
 import { fadeUp, staggerContainer } from "@/lib/motion/variants";
+import { buildBudgetSnapshot } from "@/lib/budget/snapshot";
+import { regenerateRecommendations } from "@/lib/actions/regenerate-recommendations";
 import type { RecommendationDetailsResponse } from "@/lib/validators";
 
 type RecommendationsDashboardProps = {
   data: RecommendationDetailsResponse;
   onBudgetDataChange: (budgetData: BudgetTrackingData) => void;
+  onReload: () => void;
 };
 
 export function RecommendationsDashboard({
   data,
   onBudgetDataChange,
+  onReload,
 }: RecommendationsDashboardProps) {
   const prefersReducedMotion = useReducedMotion();
   const weddingDateLabel = formatDisplayDate(data.wedding_date);
-  const generatedLabel = data.generated_at
-    ? formatDisplayDate(data.generated_at, "PPp")
+  
+  // Local active version switcher
+  const [activeVersionId, setActiveVersionId] = useState<string>(
+    data.versions && data.versions.length > 0 ? data.versions[0].id : "latest"
+  );
+  
+  const [isRegenerating, setIsRegenerating] = useState(false);
+
+  // Derive recommendations of selected version
+  const currentVersion = useMemo(() => {
+    if (data.versions && data.versions.length > 0) {
+      const match = data.versions.find((v) => v.id === activeVersionId);
+      if (match) return match;
+    }
+    return {
+      id: "latest",
+      created_at: data.generated_at || "",
+      recommendations: data.recommendations,
+    };
+  }, [data.versions, data.recommendations, data.generated_at, activeVersionId]);
+
+  // Derive dynamic budget snapshot for selected version recommendations
+  const snapshot = useMemo(() => {
+    return buildBudgetSnapshot(
+      data.total_budget,
+      currentVersion.recommendations,
+      data.payments
+    );
+  }, [data.total_budget, currentVersion.recommendations, data.payments]);
+
+  const generatedLabel = currentVersion.created_at
+    ? formatDisplayDate(currentVersion.created_at, "PPp")
     : null;
+
+  const handleRegenerate = async () => {
+    setIsRegenerating(true);
+    const toastId = toast.loading("AI is planning your celebration. Please wait...");
+    try {
+      const result = await regenerateRecommendations(data.intake_id);
+      if (result.success) {
+        toast.success(result.message, { id: toastId });
+        onReload();
+      } else {
+        toast.error(result.message, { id: toastId });
+      }
+    } catch (e) {
+      toast.error("Failed to plan recommendations.", { id: toastId });
+    } finally {
+      setIsRegenerating(false);
+    }
+  };
 
   return (
     <div className="page-shell">
@@ -44,11 +98,50 @@ export function RecommendationsDashboard({
           variants={prefersReducedMotion ? undefined : fadeUp}
           custom={0}
         >
-          <Eyebrow className="mb-4">Your wedding plan</Eyebrow>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <Eyebrow>Your wedding plan</Eyebrow>
+            <div className="flex flex-wrap items-center gap-2">
+              {data.versions && data.versions.length > 1 && (
+                <div className="flex items-center gap-1.5 rounded-xl border border-border/80 bg-card p-1 shadow-soft">
+                  <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider pl-2.5">
+                    Plan Version:
+                  </span>
+                  <select
+                    value={activeVersionId}
+                    onChange={(e) => setActiveVersionId(e.target.value)}
+                    className="rounded-lg border border-border/40 bg-secondary/80 px-2 py-1 text-xs font-semibold focus-visible:ring-1 focus-visible:ring-primary outline-none cursor-pointer"
+                  >
+                    {data.versions.map((v, index) => (
+                      <option key={v.id} value={v.id}>
+                        Version #{data.versions!.length - index} ({new Date(v.created_at).toLocaleDateString()})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 gap-1.5 text-xs font-semibold border-primary/25 text-primary hover:bg-primary hover:text-primary-foreground shadow-soft bg-card"
+                onClick={handleRegenerate}
+                disabled={isRegenerating}
+              >
+                {isRegenerating ? (
+                  <RefreshCw className="size-3.5 shrink-0 animate-spin" />
+                ) : (
+                  <Sparkles className="size-3.5 shrink-0 text-primary" />
+                )}
+                {isRegenerating ? "Plannning..." : "Regenerate AI Plan"}
+              </Button>
+            </div>
+          </div>
+
           <Heading as="h1" className="mb-3 max-w-3xl sm:mb-4">
             Vendor recommendations for{" "}
             <span className="text-primary">{data.city}</span>
           </Heading>
+          
           <Text className="max-w-2xl text-pretty">
             AI-optimized allocations based on your intake—prioritized for Indian
             wedding traditions and your couple preferences.
@@ -91,10 +184,10 @@ export function RecommendationsDashboard({
             ))}
           </ul>
 
-          {generatedLabel && data.generated_at ? (
+          {generatedLabel && currentVersion.created_at ? (
             <p className="mt-4 text-xs text-muted-foreground">
               Generated{" "}
-              <time dateTime={data.generated_at}>{generatedLabel}</time>
+              <time dateTime={currentVersion.created_at}>{generatedLabel}</time>
             </p>
           ) : null}
         </motion.header>
@@ -109,7 +202,23 @@ export function RecommendationsDashboard({
             description="High-level view of your total plan and spend"
             className="mb-6"
           />
-          <BudgetSummaryCards summary={data.budget_summary} />
+          <BudgetSummaryCards summary={snapshot.budget_summary} />
+        </section>
+
+        <section
+          className="mb-12 md:mb-16"
+          aria-labelledby="budget-allocation-heading"
+        >
+          <SectionHeader
+            id="budget-allocation-heading"
+            title="Budget distribution"
+            description="AI-generated allocation percentages across priority vendor categories"
+            className="mb-6"
+          />
+          <BudgetAllocationChart
+            recommendations={currentVersion.recommendations}
+            totalBudget={data.total_budget}
+          />
         </section>
 
         <section
@@ -119,7 +228,7 @@ export function RecommendationsDashboard({
           <SectionHeader
             id="vendor-allocations-heading"
             title="Vendor allocations"
-            description={`${data.recommendations.length} categories ranked by priority`}
+            description={`${currentVersion.recommendations.length} categories ranked by priority`}
             className="mb-6"
           />
 
@@ -129,7 +238,7 @@ export function RecommendationsDashboard({
             initial={prefersReducedMotion ? false : "hidden"}
             animate="visible"
           >
-            {data.recommendations.map((recommendation) => (
+            {currentVersion.recommendations.map((recommendation) => (
               <RecommendationCard
                 key={`${recommendation.vendor_category}-${recommendation.priority_rank}`}
                 recommendation={recommendation}
@@ -140,7 +249,10 @@ export function RecommendationsDashboard({
 
         <BudgetTrackingSection
           intakeId={data.intake_id}
-          budgetData={selectBudgetTrackingData(data)}
+          budgetData={{
+            ...selectBudgetTrackingData(data),
+            category_budgets: snapshot.category_budgets,
+          }}
           onBudgetDataChange={onBudgetDataChange}
         />
       </Container>

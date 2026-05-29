@@ -43,3 +43,22 @@ export async function getLatestRecommendationByIntakeId(
 
   return data;
 }
+
+export async function getRecommendationsHistory(
+  intakeId: string,
+): Promise<Recommendation[]> {
+  const supabase = createServerClient();
+
+  const { data, error } = await supabase
+    .from("recommendations")
+    .select()
+    .eq("intake_id", intakeId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(`Failed to fetch recommendations history: ${error.message}`);
+  }
+
+  return data ?? [];
+}
+
