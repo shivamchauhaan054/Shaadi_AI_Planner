@@ -17,7 +17,10 @@ const JSON_SCHEMA_EXAMPLE = `{
       "vendor_category": "Venue & Catering",
       "priority_rank": 1,
       "suggested_budget": 900000,
-      "rationale": "Brief reason in one or two sentences."
+      "rationale": "Brief reason in one or two sentences.",
+      "suggestedVendorStyles": ["Luxury cinematic studios", "Traditional + candid hybrid teams", "Drone coverage specialists"],
+      "vendorConsiderations": ["Floral freshness", "Stage lighting quality", "Rain contingency planning"],
+      "evaluationTips": ["Check portfolio for night ceremony lighting", "Ask if breakdown and clean-up support is included"]
     }
   ]
 }`;
@@ -37,7 +40,14 @@ Your task is to allocate vendor budgets and priorities for a couple's wedding.
 RULES (strict):
 1. Output ONLY valid JSON — no markdown, no code fences, no commentary.
 2. Return exactly 5 recommendations in the "recommendations" array.
-3. Each item must include: vendor_category (string), priority_rank (integer 1-5, unique), suggested_budget (integer INR, no decimals), rationale (concise, max 2 sentences).
+3. Each item must include:
+   - vendor_category (string)
+   - priority_rank (integer 1-5, unique)
+   - suggested_budget (integer INR, no decimals)
+   - rationale (concise, max 2 sentences)
+   - suggestedVendorStyles (array of 3-5 strings representing curated vendor sub-styles or themes tailored to this category, e.g., "Luxury cinematic studios", "Traditional + candid hybrid teams", "Drone coverage specialists" for photography)
+   - vendorConsiderations (array of 3-5 strings representing practical factors couples must navigate for this vendor type, e.g., "Floral freshness", "Stage lighting quality", "Rain contingency planning", "Breakdown support")
+   - evaluationTips (array of 3-5 strings representing specific guidance on what to look for when interviewing/evaluating this vendor type, e.g., "Check portfolio for night ceremony lighting", "Verify power backup capabilities", "Request customer reviews")
 4. priority_rank 1 = highest priority for this couple.
 5. Sum of all suggested_budget values MUST NOT exceed the provided total_budget_inr.
 6. Weight priority_rank toward the couple's stated priorities (photography, food, decor, makeup, music, venue).

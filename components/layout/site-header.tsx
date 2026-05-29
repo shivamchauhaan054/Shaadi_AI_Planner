@@ -7,7 +7,6 @@ import { Heart, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/layout/container";
 import { APP_NAME, NAV_LINKS } from "@/lib/constants";
-import { cn } from "@/lib/utils";
 
 import { motion, AnimatePresence } from "framer-motion";
 

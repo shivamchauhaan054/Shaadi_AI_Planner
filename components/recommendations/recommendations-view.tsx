@@ -31,7 +31,10 @@ export function RecommendationsView({ intakeId }: RecommendationsViewProps) {
 
   const load = useCallback(
     async (soft = false) => {
-      abortRef.current?.abort();
+      if (abortRef.current) {
+        abortRef.current.abort();
+        abortRef.current = null;
+      }
       const controller = new AbortController();
       abortRef.current = controller;
 
@@ -39,32 +42,54 @@ export function RecommendationsView({ intakeId }: RecommendationsViewProps) {
         setState({ status: "loading" });
       }
 
-      const result = await fetchRecommendationDetails(
-        intakeId,
-        controller.signal,
-      );
+      try {
+        const result = await fetchRecommendationDetails(
+          intakeId,
+          controller.signal,
+        );
 
-      if (controller.signal.aborted) return;
+        if (controller.signal.aborted) return;
 
-      if (!result.ok) {
+        if (!result.ok) {
+          if (!soft) {
+            setState({
+              status: "error",
+              message: result.message,
+              statusCode: result.statusCode,
+            });
+          } else {
+            toast.error(result.message);
+          }
+          return;
+        }
+
+        if (result.data.recommendations.length === 0) {
+          setState({ status: "empty", data: result.data });
+          return;
+        }
+
+        setState({ status: "success", data: result.data });
+      } catch (error) {
+        if (
+          error instanceof DOMException &&
+          error.name === "AbortError"
+        ) {
+          return;
+        }
+
         if (!soft) {
           setState({
             status: "error",
-            message: result.message,
-            statusCode: result.statusCode,
+            message: error instanceof Error ? error.message : "Failed to load recommendations",
           });
         } else {
-          toast.error(result.message);
+          toast.error("Failed to load recommendations");
         }
-        return;
+      } finally {
+        if (abortRef.current === controller) {
+          abortRef.current = null;
+        }
       }
-
-      if (result.data.recommendations.length === 0) {
-        setState({ status: "empty", data: result.data });
-        return;
-      }
-
-      setState({ status: "success", data: result.data });
     },
     [intakeId],
   );
@@ -91,7 +116,12 @@ export function RecommendationsView({ intakeId }: RecommendationsViewProps) {
 
   useEffect(() => {
     void load();
-    return () => abortRef.current?.abort();
+    return () => {
+      if (abortRef.current) {
+        abortRef.current.abort();
+        abortRef.current = null;
+      }
+    };
   }, [load]);
 
   if (state.status === "loading") {

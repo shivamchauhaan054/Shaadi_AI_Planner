@@ -30,6 +30,9 @@ export const vendorRecommendationSchema = z.object({
     .string()
     .min(10, "rationale is too short")
     .max(280, "rationale must be concise (max 280 characters)"),
+  suggestedVendorStyles: z.array(z.string()).optional(),
+  vendorConsiderations: z.array(z.string()).optional(),
+  evaluationTips: z.array(z.string()).optional(),
 });
 
 export type VendorRecommendation = z.infer<typeof vendorRecommendationSchema>;

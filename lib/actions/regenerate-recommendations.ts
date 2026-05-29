@@ -5,12 +5,10 @@ import { hasGroqConfig } from "@/lib/env.server";
 import { getWeddingIntakeById } from "@/lib/db/wedding-intakes";
 import { createRecommendationRecord } from "@/lib/db/recommendations";
 import { generateVendorRecommendations } from "@/lib/groq";
-import { getRecommendationDetails } from "@/lib/services/recommendation-details";
 import { BUDGET_OPTIONS } from "@/lib/constants/intake";
 import { IntakeNotFoundError } from "@/lib/errors/intake";
 import { GroqGenerationError } from "@/lib/groq";
 import type { RecommendRequest } from "@/lib/validators";
-import type { WeddingIntake } from "@/types/database";
 
 export type RegenerateResult = {
   success: boolean;
@@ -44,9 +42,9 @@ export async function regenerateRecommendations(
       weddingDate: intake.wedding_date,
       guestCount: intake.guest_count,
       city: intake.city,
-      venueType: intake.venue_type as any,
+      venueType: intake.venue_type as RecommendRequest["venueType"],
       budgetRange: matchingOption.value,
-      priorities: intake.priorities ?? [],
+      priorities: (intake.priorities ?? []) as RecommendRequest["priorities"],
     };
 
     // 3. Generate recommendations from Groq

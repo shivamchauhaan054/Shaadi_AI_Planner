@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useMemo } from "react";
 import { Calendar, MapPin, Users, Sparkles, RefreshCw } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
@@ -81,7 +83,7 @@ export function RecommendationsDashboard({
       } else {
         toast.error(result.message, { id: toastId });
       }
-    } catch (e) {
+    } catch {
       toast.error("Failed to plan recommendations.", { id: toastId });
     } finally {
       setIsRegenerating(false);

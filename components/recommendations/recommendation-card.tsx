@@ -1,6 +1,8 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Sparkles, Camera, Music, Utensils, Flower2, CircleDollarSign, ChevronDown, ChevronUp } from "lucide-react";
+import { Sparkles, Camera, Music, Utensils, Flower2, CircleDollarSign, ChevronDown, ChevronUp, Palette, ClipboardList, Eye } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import {
@@ -39,6 +41,54 @@ function getCategoryIcon(category: string) {
     return Sparkles;
   }
   return CircleDollarSign;
+}
+
+function CollapsibleList({
+  title,
+  items,
+  icon: Icon,
+}: {
+  title: string;
+  items?: string[];
+  icon: React.ComponentType<{ className?: string }>;
+}) {
+  const [showAll, setShowAll] = useState(false);
+  if (!items || items.length === 0) return null;
+
+  const hasMore = items.length > 4;
+  const displayedItems = showAll ? items : items.slice(0, 4);
+
+  return (
+    <div className="space-y-2 rounded-xl border border-border/40 bg-secondary/20 p-3.5 transition-colors duration-200 hover:bg-secondary/30">
+      <div className="flex items-center gap-2">
+        <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+          <Icon className="size-3.5" />
+        </span>
+        <h4 className="font-sans text-[10px] font-semibold uppercase tracking-wider text-foreground">
+          {title}
+        </h4>
+      </div>
+      <ul className="space-y-1 pl-8 list-disc text-xs text-muted-foreground">
+        {displayedItems.map((item, idx) => (
+          <li key={idx} className="leading-relaxed">
+            {item}
+          </li>
+        ))}
+      </ul>
+      {hasMore && (
+        <div className="pl-8 pt-0.5">
+          <button
+            type="button"
+            className="text-[10px] font-semibold text-primary hover:text-primary-foreground focus-visible:ring-1 focus-visible:ring-ring rounded px-1.5 py-0.5 bg-primary/5 hover:bg-primary transition-colors duration-200"
+            onClick={() => setShowAll(!showAll)}
+            aria-expanded={showAll}
+          >
+            {showAll ? "Show less" : `Show ${items.length - 4} more`}
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function RecommendationCard({
@@ -137,7 +187,7 @@ export function RecommendationCard({
               {formatInr(recommendation.suggested_budget)}
             </p>
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 pb-2">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/90">
               AI rationale
             </p>
@@ -163,6 +213,27 @@ export function RecommendationCard({
               </button>
             )}
           </div>
+
+          {/* Curated Style, Considerations & Evaluation Subsection Blocks */}
+          {(recommendation.suggestedVendorStyles || recommendation.vendorConsiderations || recommendation.evaluationTips) && (
+            <div className="space-y-3 pt-3 border-t border-border/40">
+              <CollapsibleList
+                title="Suggested Vendor Styles"
+                items={recommendation.suggestedVendorStyles}
+                icon={Palette}
+              />
+              <CollapsibleList
+                title="Vendor Considerations"
+                items={recommendation.vendorConsiderations}
+                icon={ClipboardList}
+              />
+              <CollapsibleList
+                title="What To Look For"
+                items={recommendation.evaluationTips}
+                icon={Eye}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
     </motion.div>

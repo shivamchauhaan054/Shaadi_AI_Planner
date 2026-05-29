@@ -24,7 +24,7 @@ export async function getRecommendationDetails(
   // Fetch complete version history
   const rawHistory = await getRecommendationsHistory(intakeId);
   const versions = rawHistory.map((rec) => {
-    let parsedRecs = [];
+    let parsedRecs: ReturnType<typeof parseStoredRecommendations> = [];
     try {
       parsedRecs = parseStoredRecommendations(rec.recommendations);
     } catch (e) {

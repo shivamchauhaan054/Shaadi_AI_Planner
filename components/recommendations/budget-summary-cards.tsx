@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { IndianRupee, PieChart, Receipt, Wallet } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
