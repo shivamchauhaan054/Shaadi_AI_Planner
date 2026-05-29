@@ -18,6 +18,7 @@ import { SectionHeader } from "@/components/shared/section-header";
 import { Eyebrow, Heading, Text } from "@/components/layout/typography";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { InlineEmpty } from "@/components/shared/inline-empty";
 import { formatDisplayDate } from "@/lib/format/dates";
 import { formatPriority, formatVenueType } from "@/lib/format/labels";
 import { fadeUp, staggerContainer } from "@/lib/motion/variants";
@@ -103,7 +104,7 @@ export function RecommendationsDashboard({
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <Eyebrow>Your wedding plan</Eyebrow>
             <div className="flex flex-wrap items-center gap-2">
-              {data.versions && data.versions.length > 1 && (
+              {data.versions && data.versions.length > 1 ? (
                 <div className="flex items-center gap-1.5 rounded-xl border border-border/80 bg-card p-1 shadow-soft">
                   <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider pl-2.5">
                     Plan Version:
@@ -120,6 +121,14 @@ export function RecommendationsDashboard({
                     ))}
                   </select>
                 </div>
+              ) : (
+                <InlineEmpty
+                  variant="subtle"
+                  icon={Sparkles}
+                  title="Your original AI wedding plan is active"
+                  description="Generate a refreshed plan anytime to compare alternative budget strategies."
+                  className="px-4 py-3 sm:px-5 sm:py-3 max-w-sm flex-1"
+                />
               )}
               
               <Button

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { fetchRecommendationDetails } from "@/lib/api/client";
 import { RecommendationsDashboard } from "@/components/recommendations/recommendations-dashboard";
@@ -124,41 +125,81 @@ export function RecommendationsView({ intakeId }: RecommendationsViewProps) {
     };
   }, [load]);
 
-  if (state.status === "loading") {
-    return <RecommendationsSkeleton />;
-  }
-
-  if (state.status === "error") {
-    const isNotFound = state.statusCode === 404;
-
-    return (
-      <RecommendationsError
-        title={isNotFound ? "Plan not found" : undefined}
-        message={
-          isNotFound
-            ? "We couldn't find a wedding intake with this link. It may have been removed or the URL is incorrect."
-            : state.message
-        }
-        onRetry={isNotFound ? undefined : handleRetry}
-        isRetrying={isRetrying}
-      />
-    );
-  }
-
-  if (state.status === "empty") {
-    return (
-      <RecommendationsEmpty
-        intakeId={state.data.intake_id}
-        city={state.data.city}
-      />
-    );
-  }
-
   return (
-    <RecommendationsDashboard
-      data={state.data}
-      onBudgetDataChange={handleBudgetDataChange}
-      onReload={() => void load()}
-    />
+    <AnimatePresence mode="wait">
+      {state.status === "loading" && (
+        <motion.div
+          key="loading"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <RecommendationsSkeleton />
+        </motion.div>
+      )}
+
+      {state.status === "error" && (
+        <motion.div
+          key="error"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <RecommendationsError
+            title={
+              state.statusCode === 404
+                ? "Plan not found"
+                : "We couldn't load your wedding plan"
+            }
+            message={
+              state.statusCode === 404
+                ? "We couldn't find a wedding intake with this link. It may have been removed or the URL is incorrect."
+                : "This may be caused by a temporary network interruption."
+            }
+            secondaryMessage={
+              state.statusCode === 404
+                ? undefined
+                : "Your saved recommendations remain securely stored."
+            }
+            retryLabel={state.statusCode === 404 ? undefined : "Retry loading plan"}
+            onRetry={state.statusCode === 404 ? undefined : handleRetry}
+            isRetrying={isRetrying}
+          />
+        </motion.div>
+      )}
+
+      {state.status === "empty" && (
+        <motion.div
+          key="empty"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <RecommendationsEmpty
+            intakeId={state.data.intake_id}
+            city={state.data.city}
+          />
+        </motion.div>
+      )}
+
+      {state.status === "success" && (
+        <motion.div
+          key="success"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <RecommendationsDashboard
+            data={state.data}
+            onBudgetDataChange={handleBudgetDataChange}
+            onReload={() => void load()}
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

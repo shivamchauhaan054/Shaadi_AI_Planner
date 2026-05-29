@@ -1,6 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
+import { PieChart } from "lucide-react";
+
+import { InlineEmpty } from "@/components/shared/inline-empty";
 import type { VendorRecommendation } from "@/lib/validators";
 
 type BudgetAllocationChartProps = {
@@ -68,7 +71,15 @@ export function BudgetAllocationChart({
     });
   }, [recommendations, totalBudget]);
 
-  if (chartData.length === 0) return null;
+  if (chartData.length === 0) {
+    return (
+      <InlineEmpty
+        icon={PieChart}
+        title="No expenses recorded yet"
+        description="Your spending insights will appear once vendor payments are added."
+      />
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-soft">

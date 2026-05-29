@@ -13,8 +13,12 @@ import { cn } from "@/lib/utils";
 type ErrorStateProps = {
   title?: string;
   message: string;
+  /** Optional secondary reassurance or helper text */
+  secondaryMessage?: string;
   onRetry?: () => void;
   isRetrying?: boolean;
+  /** Optional custom text for the retry button */
+  retryLabel?: string;
   className?: string;
   compact?: boolean;
 };
@@ -22,8 +26,10 @@ type ErrorStateProps = {
 export function ErrorState({
   title = "Something went wrong",
   message,
+  secondaryMessage,
   onRetry,
   isRetrying = false,
+  retryLabel = "Try again",
   className,
   compact = false,
 }: ErrorStateProps) {
@@ -53,7 +59,10 @@ export function ErrorState({
           <Heading id={titleId} as="h2" className="mb-3 text-2xl sm:text-3xl">
             {title}
           </Heading>
-          <Text className="mb-8 text-pretty">{message}</Text>
+          <Text className={cn("text-pretty", secondaryMessage ? "mb-4" : "mb-8")}>{message}</Text>
+          {secondaryMessage ? (
+            <p className="mb-8 text-sm text-muted-foreground">{secondaryMessage}</p>
+          ) : null}
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
             {onRetry ? (
               <Button
@@ -70,7 +79,7 @@ export function ErrorState({
                 ) : (
                   <>
                     <RefreshCw className="size-4" aria-hidden />
-                    Try again
+                    {retryLabel}
                   </>
                 )}
               </Button>

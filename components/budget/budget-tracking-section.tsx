@@ -100,7 +100,10 @@ export function BudgetTrackingSection({
 
       <div className="space-y-4">
         <h3 className="font-display text-lg font-semibold">Payment history</h3>
-        <PaymentTable payments={budgetData.payments} />
+        <PaymentTable 
+          payments={budgetData.payments} 
+          onAddPayment={() => setModalOpen(true)}
+        />
       </div>
 
       <PaymentModal

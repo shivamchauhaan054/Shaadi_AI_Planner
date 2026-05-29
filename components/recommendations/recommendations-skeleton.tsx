@@ -12,27 +12,38 @@ function BudgetCardSkeleton() {
 
 function VendorCardSkeleton({ index }: { index: number }) {
   const lineWidths = [
-    ["w-[92%]", "w-[85%]", "w-[65%]"],
-    ["w-[96%]", "w-[78%]", "w-[72%]"],
-    ["w-[90%]", "w-[88%]", "w-[60%]"],
-    ["w-[94%]", "w-[82%]", "w-[68%]"],
+    ["w-[92%]", "w-[85%]"],
+    ["w-[96%]", "w-[78%]"],
+    ["w-[90%]", "w-[88%]"],
+    ["w-[94%]", "w-[82%]"],
   ];
   const widths = lineWidths[index % 4];
 
   return (
-    <div className="space-y-4 rounded-2xl border border-border/60 bg-card p-6 shadow-soft">
-      <div className="flex items-center justify-between">
-        <Skeleton className="h-5 w-16 rounded-full" />
-        {index === 0 && <Skeleton className="h-5 w-28 rounded-full" />}
+    <div className="flex flex-col space-y-4 rounded-2xl border border-border/60 bg-card p-6 shadow-soft">
+      <div className="flex items-start justify-between">
+        <div className="space-y-2">
+          <Skeleton className="h-6 w-36 rounded-md" />
+          <Skeleton className="h-4 w-20 rounded-full" />
+        </div>
+        {index === 0 && <Skeleton className="h-6 w-24 rounded-full bg-primary/20" />}
       </div>
-      <Skeleton className="h-7 w-48 rounded-lg" />
-      <div className="flex items-baseline gap-1 py-1">
-        <Skeleton className="h-8 w-36 rounded-lg" />
+      
+      <div className="pt-2">
+        <div className="flex items-baseline gap-1">
+          <Skeleton className="h-9 w-32 rounded-lg" />
+        </div>
+        <Skeleton className="mt-3 h-1.5 w-full rounded-full" />
       </div>
-      <div className="space-y-2 pt-2 border-t border-border/40">
-        <Skeleton className={`h-3.5 ${widths[0]} rounded-md`} />
-        <Skeleton className={`h-3.5 ${widths[1]} rounded-md`} />
-        <Skeleton className={`h-3.5 ${widths[2]} rounded-md`} />
+
+      <div className="space-y-2.5 pt-4 border-t border-border/40 flex-1">
+        <Skeleton className={`h-4 ${widths[0]} rounded-md`} />
+        <Skeleton className={`h-4 ${widths[1]} rounded-md`} />
+      </div>
+      
+      <div className="flex flex-wrap gap-2 pt-2">
+        <Skeleton className="h-6 w-24 rounded-full" />
+        <Skeleton className="h-6 w-28 rounded-full" />
       </div>
     </div>
   );

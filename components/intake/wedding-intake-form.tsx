@@ -24,7 +24,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { submitWeddingIntake } from "@/lib/actions/submit-wedding-intake";
 import { INTAKE_STEPS } from "@/lib/constants";
 import { mergeStepWatchValues } from "@/lib/intake/step-values";
 import { slideStep, slideStepTransition } from "@/lib/motion/variants";
@@ -99,20 +98,13 @@ export function WeddingIntakeForm() {
     if (!isFirstStep) goToStep(currentStep - 1);
   }, [currentStep, goToStep, isFirstStep]);
 
-  const onSubmit = form.handleSubmit(async (values) => {
+  const onSubmit = form.handleSubmit((values) => {
     setIsSubmitting(true);
     try {
-      const result = await submitWeddingIntake(values);
-      if (result.success && result.intakeId) {
-        toast.success(result.message);
-        router.push(`/recommendations/${result.intakeId}`);
-        return;
-      }
-
-      toast.error(result.message);
+      sessionStorage.setItem("shaadi_intake_payload", JSON.stringify(values));
+      router.push("/recommendations/generate");
     } catch {
-      toast.error("Something went wrong. Please try again.");
-    } finally {
+      toast.error("Unable to start planning. Please ensure local storage is enabled.");
       setIsSubmitting(false);
     }
   });

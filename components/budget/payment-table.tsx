@@ -1,4 +1,4 @@
-import { Receipt } from "lucide-react";
+import { Wallet } from "lucide-react";
 
 import { InlineEmpty } from "@/components/shared/inline-empty";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,15 +17,26 @@ import type { PaymentRecord } from "@/lib/validations/payments";
 type PaymentTableProps = {
   payments: PaymentRecord[];
   isLoading?: boolean;
+  onAddPayment?: () => void;
 };
 
-export function PaymentTable({ payments, isLoading }: PaymentTableProps) {
+export function PaymentTable({ payments, isLoading, onAddPayment }: PaymentTableProps) {
   if (!isLoading && payments.length === 0) {
     return (
       <InlineEmpty
-        icon={Receipt}
-        title="No payments yet"
-        description="Record your first vendor payment to start tracking spend."
+        icon={Wallet}
+        title="No payments logged yet"
+        description="Start tracking wedding expenses by recording your first vendor payment."
+        bullets={[
+          "Monitor category spending",
+          "Stay within your wedding budget",
+          "Track balances in real time",
+        ]}
+        action={
+          onAddPayment
+            ? { label: "Add your first payment", onClick: onAddPayment }
+            : undefined
+        }
       />
     );
   }
