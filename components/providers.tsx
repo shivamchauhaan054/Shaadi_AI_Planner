@@ -1,7 +1,7 @@
 "use client";
 
-import { ThemeProvider } from "next-themes";
-import { Toaster } from "sonner";
+import { ThemeAwareToaster } from "@/components/theme/theme-aware-toaster";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 
 type ProvidersProps = {
   children: React.ReactNode;
@@ -9,28 +9,9 @@ type ProvidersProps = {
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="light"
-      enableSystem
-      disableTransitionOnChange
-    >
+    <ThemeProvider>
       {children}
-      <Toaster
-        position="top-center"
-        richColors
-        closeButton
-        expand={false}
-        duration={4000}
-        toastOptions={{
-          classNames: {
-            toast:
-              "font-sans rounded-xl border border-border/80 bg-card shadow-card",
-            title: "text-sm font-medium",
-            description: "text-sm text-muted-foreground",
-          },
-        }}
-      />
+      <ThemeAwareToaster />
     </ThemeProvider>
   );
 }

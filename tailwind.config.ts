@@ -80,9 +80,9 @@ const config: Config = {
         "3xl": "calc(var(--radius) + 16px)",
       },
       boxShadow: {
-        soft: "0 4px 24px -4px hsl(350 42% 38% / 0.08)",
-        card: "0 8px 32px -8px hsl(350 42% 38% / 0.12)",
-        glow: "0 0 48px -12px hsl(38 72% 52% / 0.25)",
+        soft: "0 4px 24px -4px hsl(var(--shadow-soft))",
+        card: "0 8px 32px -8px hsl(var(--shadow-card))",
+        glow: "0 0 48px -12px hsl(var(--wedding-gold) / 0.22)",
       },
       keyframes: {
         "fade-up": {

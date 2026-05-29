@@ -6,6 +6,7 @@ import { Heart, Menu, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/layout/container";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { APP_NAME, NAV_LINKS } from "@/lib/constants";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -45,7 +46,9 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <ThemeToggle />
+
           <Button
             asChild
             size="sm"
@@ -99,6 +102,7 @@ export function SiteHeader() {
                   Start planning
                 </Link>
               </Button>
+              <ThemeToggle variant="menu-row" className="mt-3 border-t border-border/60 pt-3" />
             </Container>
           </motion.div>
         )}

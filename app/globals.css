@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    color-scheme: light;
     --background: 32 45% 97%;
     --foreground: 340 28% 14%;
     --card: 0 0% 100%;
@@ -28,6 +29,47 @@
     --wedding-gold: 38 72% 52%;
     --wedding-rose: 350 42% 38%;
     --wedding-cream: 32 45% 97%;
+    --chart-1: 350 42% 38%;
+    --chart-2: 38 72% 52%;
+    --chart-3: 350 32% 52%;
+    --chart-4: 32 45% 68%;
+    --chart-5: 18 40% 62%;
+    --shadow-soft: 350 42% 38% / 0.08;
+    --shadow-card: 350 42% 38% / 0.12;
+  }
+
+  .dark {
+    color-scheme: dark;
+    --background: 340 16% 9%;
+    --foreground: 32 28% 93%;
+    --card: 340 14% 12%;
+    --card-foreground: 32 28% 93%;
+    --popover: 340 14% 13%;
+    --popover-foreground: 32 28% 93%;
+    --primary: 350 36% 62%;
+    --primary-foreground: 340 18% 8%;
+    --secondary: 340 12% 16%;
+    --secondary-foreground: 32 22% 88%;
+    --muted: 340 10% 17%;
+    --muted-foreground: 30 12% 62%;
+    --accent: 38 48% 58%;
+    --accent-foreground: 340 18% 8%;
+    --destructive: 0 58% 58%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 340 10% 20%;
+    --input: 340 10% 20%;
+    --ring: 350 36% 62%;
+    --wedding-blush: 340 14% 14%;
+    --wedding-gold: 38 48% 58%;
+    --wedding-rose: 350 36% 62%;
+    --wedding-cream: 340 16% 9%;
+    --chart-1: 350 36% 62%;
+    --chart-2: 38 48% 58%;
+    --chart-3: 350 28% 48%;
+    --chart-4: 32 20% 42%;
+    --chart-5: 18 24% 46%;
+    --shadow-soft: 340 40% 4% / 0.35;
+    --shadow-card: 340 40% 2% / 0.5;
   }
 
   * {
@@ -86,13 +128,18 @@
     background:
       radial-gradient(
         ellipse 80% 55% at 50% -15%,
-        hsl(350 42% 38% / 0.1),
+        hsl(var(--wedding-rose) / 0.12),
         transparent 65%
       ),
       radial-gradient(
         ellipse 50% 40% at 100% 0%,
-        hsl(38 72% 52% / 0.08),
+        hsl(var(--wedding-gold) / 0.08),
         transparent 55%
+      ),
+      radial-gradient(
+        ellipse 40% 35% at 0% 20%,
+        hsl(var(--wedding-rose) / 0.05),
+        transparent 50%
       ),
       linear-gradient(
         180deg,
@@ -102,7 +149,7 @@
   }
 
   .glass-card {
-    @apply rounded-2xl border border-white/70 bg-white/75 shadow-soft backdrop-blur-md;
+    @apply rounded-2xl border border-border/60 bg-card/80 shadow-soft backdrop-blur-md;
   }
 
   .interactive-card {

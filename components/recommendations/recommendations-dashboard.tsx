@@ -101,10 +101,10 @@ export function RecommendationsDashboard({
           variants={prefersReducedMotion ? undefined : fadeUp}
           custom={0}
         >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
             <Eyebrow>Your wedding plan</Eyebrow>
-            <div className="flex flex-wrap items-center gap-2">
-              {data.versions && data.versions.length > 1 ? (
+            <div className="flex flex-wrap items-center gap-3">
+              {data.versions && data.versions.length > 1 && (
                 <div className="flex items-center gap-1.5 rounded-xl border border-border/80 bg-card p-1 shadow-soft">
                   <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider pl-2.5">
                     Plan Version:
@@ -121,20 +121,12 @@ export function RecommendationsDashboard({
                     ))}
                   </select>
                 </div>
-              ) : (
-                <InlineEmpty
-                  variant="subtle"
-                  icon={Sparkles}
-                  title="Your original AI wedding plan is active"
-                  description="Generate a refreshed plan anytime to compare alternative budget strategies."
-                  className="px-4 py-3 sm:px-5 sm:py-3 max-w-sm flex-1"
-                />
               )}
               
               <Button
                 size="sm"
                 variant="outline"
-                className="h-8 gap-1.5 text-xs font-semibold border-primary/25 text-primary hover:bg-primary hover:text-primary-foreground shadow-soft bg-card"
+                className="h-9 gap-1.5 text-xs font-semibold border-primary/25 text-primary hover:bg-primary hover:text-primary-foreground shadow-soft bg-card"
                 onClick={handleRegenerate}
                 disabled={isRegenerating}
               >
@@ -201,6 +193,18 @@ export function RecommendationsDashboard({
               <time dateTime={currentVersion.created_at}>{generatedLabel}</time>
             </p>
           ) : null}
+
+          {(!data.versions || data.versions.length <= 1) && (
+            <div className="mt-8 max-w-2xl">
+              <InlineEmpty
+                variant="subtle"
+                icon={Sparkles}
+                title="Your original AI wedding plan is active"
+                description="Generate a refreshed plan anytime to compare alternative budget strategies."
+                className="px-5 py-4 sm:px-6 sm:py-5"
+              />
+            </div>
+          )}
         </motion.header>
 
         <section

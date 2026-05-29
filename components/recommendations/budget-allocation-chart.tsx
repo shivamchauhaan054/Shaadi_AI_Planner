@@ -12,36 +12,30 @@ type BudgetAllocationChartProps = {
 };
 
 const PALETTE = [
-  "bg-primary",
-  "bg-accent",
-  "bg-rose-700/80",
-  "bg-amber-600/70",
-  "bg-rose-400/70",
+  "bg-[hsl(var(--chart-1))]",
+  "bg-[hsl(var(--chart-2))]",
+  "bg-[hsl(var(--chart-3))]",
+  "bg-[hsl(var(--chart-4))]",
+  "bg-[hsl(var(--chart-5))]",
 ];
 
 const BORDER_PALETTE = [
-  "border-primary/20",
-  "border-accent/20",
-  "border-rose-700/20",
-  "border-amber-600/20",
-  "border-rose-400/20",
+  "border-[hsl(var(--chart-1)/0.25)]",
+  "border-[hsl(var(--chart-2)/0.25)]",
+  "border-[hsl(var(--chart-3)/0.25)]",
+  "border-[hsl(var(--chart-4)/0.25)]",
+  "border-[hsl(var(--chart-5)/0.25)]",
 ];
 
 const TEXT_PALETTE = [
-  "text-primary",
-  "text-accent",
-  "text-rose-700",
-  "text-amber-600",
-  "text-rose-500",
+  "text-[hsl(var(--chart-1))]",
+  "text-[hsl(var(--chart-2))]",
+  "text-[hsl(var(--chart-3))]",
+  "text-[hsl(var(--chart-4))]",
+  "text-[hsl(var(--chart-5))]",
 ];
 
-const DOT_PALETTE = [
-  "bg-primary",
-  "bg-accent",
-  "bg-rose-700",
-  "bg-amber-600",
-  "bg-rose-400",
-];
+const DOT_PALETTE = PALETTE;
 
 export function BudgetAllocationChart({
   recommendations,
@@ -112,7 +106,7 @@ export function BudgetAllocationChart({
           return (
             <div
               key={i}
-              className={`h-full ${item.colorClass} first:rounded-l-full last:rounded-r-full transition-all duration-500 ease-out hover:brightness-95 hover:scale-y-110 relative group cursor-help`}
+              className={`h-full ${item.colorClass} first:rounded-l-full last:rounded-r-full transition-all duration-500 ease-out hover:brightness-110 dark:hover:brightness-125 relative group cursor-help`}
               style={{ width: `${item.percentage}%` }}
               title={`${item.category}: ₹${item.amount.toLocaleString("en-IN")} (${item.percentage.toFixed(1)}%)`}
             />

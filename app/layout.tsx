@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { Providers } from "@/components/providers";
 import { rootMetadata } from "@/lib/metadata";
+import { themeInitScript } from "@/lib/theme/config";
 
 import "./globals.css";
 
@@ -30,6 +31,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body
         className={`${fontSans.variable} ${fontDisplay.variable} min-h-screen font-sans antialiased`}
       >
