@@ -126,12 +126,12 @@ export function RecommendationCard({
     setTypedText("");
 
     const intervalId = setInterval(() => {
-      setTypedText((prev) => prev + targetText.charAt(currentIndex));
-      currentIndex++;
+      currentIndex += 1;
+      setTypedText(targetText.slice(0, currentIndex));
       if (currentIndex >= targetText.length) {
         clearInterval(intervalId);
       }
-    }, 6); // blazing fast and fluid typewriter effect
+    }, 12);
 
     return () => clearInterval(intervalId);
   }, [targetText, prefersReducedMotion, isClient]);
